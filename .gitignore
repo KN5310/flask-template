@@ -1,0 +1,6 @@
+# Macのメタファイル
+**/.DS_Store
+**/._.DS_Store
+
+# Pythonのキャッシュディレクトリ
+**/__pycache__/
