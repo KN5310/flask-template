@@ -1,0 +1,30 @@
+# docker-compose.yml
+# version: "3.9"
+services:
+  web:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "8080:80"
+    env_file:
+      - key/.env
+    depends_on:
+      - db
+    command: >
+      bash -c "
+      ./wait-for-it.sh db:3306 --timeout=30 --strict &&
+      python ensure_db.py &&
+      flask run --host=0.0.0.0 --port=80
+      "
+    restart: unless-stopped
+
+  db:
+    image: mysql:8
+    env_file:
+      - key/.env
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+
+

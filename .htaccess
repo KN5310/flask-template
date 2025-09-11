@@ -1,0 +1,16 @@
+#htaccess
+
+#.htaccessのパーミッション604
+#.index.cgiのパーミッション700
+Options +ExecCGI
+AddHandler cgi-script .cgi .py
+RewriteEngine On
+
+# 既存ファイル/ディレクトリは対象外
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# index.cgi 自体の呼び出しは除外
+
+# それ以外は index.cgi に渡す
+RewriteRule ^(.*)$ index.cgi/$1 [QSA,L]

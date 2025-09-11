@@ -1,0 +1,13 @@
+<!-- templates/index.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}{{ site_name }} | トップ{% endblock %}
+
+{% block content %}
+<h1>Hello World</h1>
+
+<p>index.htmlです。</p>
+<p><a href="{{ cleaned_url('main.test_page') }}">テストページへ移動</a></p>
+
+{% endblock %}

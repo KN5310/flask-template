@@ -1,0 +1,40 @@
+# ----------------------------------------
+# Mac のメタファイル
+**/.DS_Store
+**/._.DS_Store
+
+# Python キャッシュ
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 環境ファイル（本物はアップしない）
+.env
+
+# サンプル環境ファイルは OK
+!.env.example
+
+# すべてのテキストファイルはアップしない
+*.txt
+
+# ただし以下は例外としてアップする
+!requirements.txt
+!readme.txt
+
+# ログフォルダはアップしない
+logs/
+
+# バーチャル環境（venv, .envなどプロジェクト内の仮想環境）
+venv/
+.env.local
+.env.dev
+
+# IDE 関連
+.vscode/
+.idea/
+
+# マイグレーション自体は Git 管理するので ignore しない
+# ただし migrations/__pycache__ は無視
+migrations/__pycache__/
+migrations/*.pyc

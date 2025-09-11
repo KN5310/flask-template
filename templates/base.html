@@ -1,0 +1,48 @@
+<!-- templates/base.html -->
+
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="keywords" content="{{ site_name }}" />
+		<meta
+			property="og:description"
+			content="{% block og_description %}{{ site_name }}ページの要約{% endblock %}"
+		/>
+		<meta property="og:title" content="{% block og_title %}{{ site_name }}{% endblock %}" />
+		<meta
+			property="og:image"
+			content="{{ site_root_url }}{{ static_url('image/thumbnail.png') }}"
+		/>
+		<meta property="og:url" content="{% block og_url %}{{ request.path }}{% endblock %}" />
+		<meta property="og:type" content="website" />
+		<meta name="csrf-token" content="{{ csrf_token() }}" />
+
+		<title>{% block title %}{{ site_name }}{% endblock %}</title>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+		/>
+		<link rel="stylesheet" href="static/css/index.css" />
+		<link rel="icon" href="{{ site_root_url }}{{ static_url('image/favicon.png') }}" />
+	</head>
+
+	<body>
+		{% include 'header.html' %}
+
+		<main>
+			<div class="wrapper">{% block content %}{% endblock %}</div>
+		</main>
+
+		{% include 'footer.html' %}
+
+		<script src="{{ static_url('js/script.js') }}"></script>
+
+		<div
+			id="global-config"
+			data-base-path="{{ base_path }}"
+			data-site-root-url="{{ site_root_url }}"
+		></div>
+	</body>
+</html>
