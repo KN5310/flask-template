@@ -57,6 +57,33 @@ def create_app():
         db.init_app(app)
         migrate.init_app(app, db)
 
+        # ----------------------------
+        # Docker環境の場合のみ、全テーブル削除→モデル通りに作成
+        from sqlalchemy import text
+        with app.app_context():
+            if ENV_TYPE == "docker":
+                try:
+                    # DB に存在するテーブル一覧を取得
+                    with db.engine.connect() as conn:
+                        result = conn.execute(text("SHOW TABLES;"))
+                        db_tables = [row[0] for row in result.fetchall()]
+
+                        # 全テーブル削除（alembic_version だけ残す）
+                        for table in db_tables:
+                            if table != "alembic_version":
+                                conn.execute(text(f"DROP TABLE `{table}`;"))
+                                app.logger.info(f"Docker環境: テーブル {table} を削除しました")
+
+                    # モデルにあるテーブルを作成
+                    db.create_all()
+                    app.logger.info("Docker環境: モデル通りにテーブルを作成しました")
+
+                except Exception as e:
+                    app.logger.error(f"テーブル作成/削除エラー: {e}")
+        # ----------------------------
+
+
+
         from app.routes.routes_main import routes_main
         app.register_blueprint(routes_main)
 
