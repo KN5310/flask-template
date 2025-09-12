@@ -7,7 +7,7 @@ import smtplib
 from email.mime.text import MIMEText
 from flask import Blueprint, render_template, current_app, request, redirect, flash
 from app.utils.utils import cleaned_url
-from app.models import db, User
+from app.models.model_mysql import db, UserMysql
 
 routes_main = Blueprint("main", __name__)
 
@@ -21,9 +21,7 @@ def index():
 @routes_main.route("/test")
 def test_page():
     current_app.logger.info("テストページにアクセスされました。")
-
-    users = User.query.all()
-
+    users = UserMysql.query.all()  # ← User から UserMysql に変更
     return render_template("test.html", users=users)
 
 
@@ -31,8 +29,7 @@ def test_page():
 def register_name():
     username = request.form.get("username", "").strip()
     if username:
-
-        new_user = User(name=username)
+        new_user = UserMysql(name=username)  # ← 変更
         db.session.add(new_user)
         db.session.commit()
         flash(f"{username} を登録しました！", "success")
@@ -44,7 +41,7 @@ def register_name():
 @routes_main.route("/delete_all_users", methods=["POST"])
 def delete_all_users():
     try:
-        num_deleted = User.query.delete()
+        num_deleted = UserMysql.query.delete()  # ← 変更
         db.session.commit()
         flash(f"{num_deleted} 件のユーザーを削除しました！", "success")
     except Exception as e:

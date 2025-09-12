@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
-from app.models.model_test import db, User  
+from app.models.model_mysql import db, UserMysql  
 from app.utils.utils import cleaned_url  
 
 migrate = Migrate()

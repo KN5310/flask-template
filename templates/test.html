@@ -13,7 +13,10 @@ message in messages %}
 <div class="flash-{{ category }}">{{ message }}</div>
 {% endfor %} {% endif %} {% endwith %}
 
+<hr>
+
 <!-- 名前登録フォーム -->
+<h2>MySQL登録・削除</h2>
 <form method="POST" action="{{ cleaned_url('main.register_name') }}">
 	<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
