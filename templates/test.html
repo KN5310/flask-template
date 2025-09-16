@@ -1,67 +1,92 @@
 <!-- templates/test.html -->
 
-{% extends 'base.html' %} {% block title %}{{ site_name }} | トップ{% endblock %} {% block content
-%}
+{% extends 'base.html' %}
+{% block title %}{{ site_name }} | トップ{% endblock %}
+{% block content %}
+
 <h1>Hello World</h1>
 
 <p>test.htmlです。</p>
 <p><a href="{{ cleaned_url('main.index') }}">TOPへ移動</a></p>
 
 <!-- フラッシュメッセージ -->
-{% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category,
-message in messages %}
-<div class="flash-{{ category }}">{{ message }}</div>
-{% endfor %} {% endif %} {% endwith %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="flash-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 
-<!-- 名前登録フォーム -->
+<hr>
+
+<!-- MySQL登録フォーム -->
+<h2>MySQL登録・削除</h2>
 <form method="POST" action="{{ cleaned_url('main.register_name') }}">
-	<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-
-	<label for="username">名前:</label>
-	<input type="text" id="username" name="username" required />
-	<button type="submit">登録</button>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <label for="username_mysql">名前:</label>
+  <input type="text" id="username_mysql" name="username" required />
+  <button type="submit">登録</button>
 </form>
 
-<!-- 全ユーザー削除フォーム -->
-<form
-    method="POST"
-    action="{{ cleaned_url('main.delete_all_users') }}"
-    class="form-inline"
->
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-    <button
-        type="submit"
-        onclick="return confirm('本当に全ユーザーを削除しますか？');"
-        class="button-danger"
-    >
-        全削除
-    </button>
+<form method="POST" action="{{ cleaned_url('main.delete_all_users') }}" class="form-inline">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <button type="submit" onclick="return confirm('本当に全ユーザーを削除しますか？');" class="button-danger">
+    全削除
+  </button>
 </form>
 
-<!-- 登録済みユーザー一覧 -->
-{% if users %}
-<h2>登録済みの名前</h2>
+{% if users_mysql %}
+<h3>登録済みのMySQLユーザー</h3>
 <ul>
-	{% for user in users %}
-	<li>{{ user.name }}</li>
-	{% endfor %}
+  {% for user in users_mysql %}
+    <li>{{ user.name }}</li>
+  {% endfor %}
 </ul>
 {% else %}
-<p>まだ登録されていません。</p>
+<p>まだMySQLユーザーは登録されていません。</p>
 {% endif %}
+
+<hr>
+
+<!-- SQLite登録フォーム -->
+<h2>SQLite登録・削除</h2>
+<form method="POST" action="{{ cleaned_url('main.register_name_sqlite') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <label for="username_sqlite">名前:</label>
+  <input type="text" id="username_sqlite" name="username" required />
+  <button type="submit">登録</button>
+</form>
+
+<form method="POST" action="{{ cleaned_url('main.delete_all_users_sqlite') }}" class="form-inline">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <button type="submit" onclick="return confirm('本当に全SQLiteユーザーを削除しますか？');" class="button-danger">
+    全削除
+  </button>
+</form>
+
+{% if users_sqlite %}
+<h3>登録済みのSQLiteユーザー</h3>
+<ul>
+  {% for user in users_sqlite %}
+    <li>{{ user.name }}</li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>まだSQLiteユーザーは登録されていません。</p>
+{% endif %}
+
+<hr>
 
 <!-- メール送信フォーム -->
 <h2>メール送信</h2>
 <form method="POST" action="{{ cleaned_url('main.send_email') }}">
-	<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-
-	<label for="subject">件名:</label><br />
-	<input type="text" id="subject" name="subject" required /><br />
-
-	<label for="body">本文:</label><br />
-	<textarea id="body" name="body" rows="5" required></textarea><br />
-
-	<button type="submit">送信</button>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <label for="subject">件名:</label><br />
+  <input type="text" id="subject" name="subject" required /><br />
+  <label for="body">本文:</label><br />
+  <textarea id="body" name="body" rows="5" required></textarea><br />
+  <button type="submit">送信</button>
 </form>
 
 {% endblock %}

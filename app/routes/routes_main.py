@@ -7,7 +7,8 @@ import smtplib
 from email.mime.text import MIMEText
 from flask import Blueprint, render_template, current_app, request, redirect, flash
 from app.utils.utils import cleaned_url
-from app.models import db, User
+from app.models.model_mysql import db, UserMysql
+from app.models.model_sqlite import db_sqlite, UserSqlite
 
 routes_main = Blueprint("main", __name__)
 
@@ -22,17 +23,27 @@ def index():
 def test_page():
     current_app.logger.info("テストページにアクセスされました。")
 
-    users = User.query.all()
+    users_mysql = []
+    users_sqlite = []
 
-    return render_template("test.html", users=users)
+    if current_app.config.get("SQLALCHEMY_DATABASE_URI", "").startswith("sqlite"):
+        users_sqlite = db_sqlite.session.query(UserSqlite).all()
+    else:
+        users_mysql = UserMysql.query.all()
 
+    return render_template(
+        "test.html",
+        users_mysql=users_mysql,
+        users_sqlite=users_sqlite
+    )
+
+    
 
 @routes_main.route("/register_name", methods=["POST"])
 def register_name():
     username = request.form.get("username", "").strip()
     if username:
-
-        new_user = User(name=username)
+        new_user = UserMysql(name=username)  # ← 変更
         db.session.add(new_user)
         db.session.commit()
         flash(f"{username} を登録しました！", "success")
@@ -44,13 +55,37 @@ def register_name():
 @routes_main.route("/delete_all_users", methods=["POST"])
 def delete_all_users():
     try:
-        num_deleted = User.query.delete()
+        num_deleted = UserMysql.query.delete()  # ← 変更
         db.session.commit()
         flash(f"{num_deleted} 件のユーザーを削除しました！", "success")
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"ユーザー全削除エラー: {e}")
         flash("ユーザー全削除に失敗しました。", "error")
+    return redirect(cleaned_url("main.test_page"))
+
+@routes_main.route("/register_name_sqlite", methods=["POST"])
+def register_name_sqlite():
+    username = request.form.get("username", "").strip()
+    if username:
+        new_user = UserSqlite(name=username)
+        db_sqlite.session.add(new_user)
+        db_sqlite.session.commit()
+        flash(f"{username} をSQLiteに登録しました！", "success")
+    else:
+        flash("名前を入力してください", "error")
+    return redirect(cleaned_url("main.test_page"))
+
+@routes_main.route("/delete_all_users_sqlite", methods=["POST"])
+def delete_all_users_sqlite():
+    try:
+        num_deleted = db_sqlite.session.query(UserSqlite).delete()
+        db_sqlite.session.commit()
+        flash(f"{num_deleted} 件のSQLiteユーザーを削除しました！", "success")
+    except Exception as e:
+        db_sqlite.session.rollback()
+        current_app.logger.error(f"SQLiteユーザー全削除エラー: {e}")
+        flash("SQLiteユーザー全削除に失敗しました。", "error")
     return redirect(cleaned_url("main.test_page"))
 
 

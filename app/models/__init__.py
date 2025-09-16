@@ -6,4 +6,4 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-from .model_test import *
+from .model_mysql import *
